@@ -15,7 +15,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_18_160746) do
   enable_extension "plpgsql"
 
   create_table "player_skills", force: :cascade do |t|
-    t.string "skill_name", null: false
+    t.string "skill", null: false
     t.integer "value", null: false
     t.bigint "player_id", null: false
     t.datetime "created_at", null: false
