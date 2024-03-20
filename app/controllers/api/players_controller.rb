@@ -1,4 +1,5 @@
 class Api::PlayersController < ApplicationController
+  before_action :authorize_request, only: [:destroy]
   before_action :set_player, only: [:show, :update, :destroy]
 
   def index
@@ -34,6 +35,8 @@ class Api::PlayersController < ApplicationController
   end
 
   def destroy
+    @player.destroy
+    render json: { message: 'Player deleted' }
   end
 
   private
@@ -63,5 +66,24 @@ class Api::PlayersController < ApplicationController
       player_skill = @player.player_skills[index]
       player_skill.update(skill_params)
     end
+  end
+
+  def authorize_request
+    # return render json: { error: "Authorization header missing" }, status: :unauthorized unless request.headers['Authorization'].present?
+    unless request.headers['Authorization'].present?
+      render json: { error: "Authorization header missing" }, status: :unauthorized
+      return
+    end
+    
+    token = request.headers['Authorization'].split(' ').last
+
+    unless valid_token?(token)
+      render json: { error: "Invalid token" }, status: :unauthorized
+      return
+    end
+  end
+
+  def valid_token?(token)
+    token == 'SkFabTZibXE1aE14ckpQUUxHc2dnQ2RzdlFRTTM2NFE2cGI4d3RQNjZmdEFITmdBQkE='
   end
 end
